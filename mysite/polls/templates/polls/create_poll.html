@@ -1,0 +1,17 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+
+<html>
+<head>
+    <title>Create Poll</title>
+</head>
+<body>
+    <h1>Create a New Poll</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+    <a href="{% url 'polls:index' %}">Back to Polls</a>
+</body>
+</html>

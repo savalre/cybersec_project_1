@@ -1,12 +1,10 @@
-# polls/views.py
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Choice, Question, SignupForm, LoginForm
+from .models import Choice, Question, SignupForm, LoginForm, QuestionForm
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -80,3 +78,13 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def create_poll(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('polls:index')
+    else:
+        form = QuestionForm(initial={'pub_date': timezone.now()})
+    return render(request, 'polls/create_poll.html', {'form': form})

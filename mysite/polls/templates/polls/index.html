@@ -12,12 +12,24 @@
 
 <h1>Welcome to polls app!</h1>
 
-{% if latest_question_list %}
-    <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
+{% if user.is_authenticated %}
+    {% if latest_question_list %}
+        <table>
+            <tr>
+                <th>Questions</th>
+            </tr>
+            {% for question in latest_question_list %}
+            <tr>
+                <td><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+    <a href="{% url 'polls:create' %}" class="button">Create New Poll</a>
 {% else %}
-    <p>No polls are available.</p>
+    <p>You need to <a href="{% url 'polls:login' %}">log in</a> to see the polls.</p>
 {% endif %}
+
+
