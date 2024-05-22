@@ -10,24 +10,27 @@
   <a href="{% url 'polls:signup' %}">Register</a>
 {% endif %}
 
-<h1>Welcome to polls app!</h1>
+<h1>Welcome to very secure message board!</h1>
 
 {% if user.is_authenticated %}
     {% if latest_question_list %}
         <table>
             <tr>
-                <th>Questions</th>
+                <th>Message</th>
+                <th>Time</th>
             </tr>
             {% for question in latest_question_list %}
             <tr>
-                <td><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></td>
+                <td>{{ question.question_text }}</td>
+                <td>{{ question.pub_date }}</td>
             </tr>
             {% endfor %}
         </table>
     {% else %}
         <p>No polls are available.</p>
     {% endif %}
-    <a href="{% url 'polls:create' %}" class="button">Create New Poll</a>
+    <br>
+    <a href="{% url 'polls:create' %}">Post a message</a>
 {% else %}
     <p>You need to <a href="{% url 'polls:login' %}">log in</a> to see the polls.</p>
 {% endif %}
