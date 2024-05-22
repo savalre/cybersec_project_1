@@ -13,16 +13,21 @@
 <h1>Welcome to very secure message board!</h1>
 
 {% if user.is_authenticated %}
-    {% if latest_question_list %}
+    {% if latest_message_list %}
         <table>
             <tr>
                 <th>Message</th>
                 <th>Time</th>
+                <th>Delete Message</th>
             </tr>
-            {% for question in latest_question_list %}
+            {% for message in latest_message_list %}
             <tr>
-                <td>{{ question.question_text }}</td>
-                <td>{{ question.pub_date }}</td>
+                <td>{{ message.message_text }}</td>
+                <td>{{ message.pub_date }}</td>
+                <td><form action="{% url 'polls:message_delete' message.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form></td>           
             </tr>
             {% endfor %}
         </table>

@@ -7,11 +7,11 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
 class Message(models.Model):
-    question_text = models.CharField(max_length=200)
+    message_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
 
     def __str__(self):
-        return self.question_text
+        return self.message_text
 
     def was_published_recently(self):
         now = timezone.now()
@@ -34,10 +34,10 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-class QuestionForm(forms.ModelForm):
+class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['question_text', 'pub_date']
+        fields = ['message_text', 'pub_date']
         widgets = {
             'pub_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

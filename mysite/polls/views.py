@@ -4,11 +4,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Choice, Message, SignupForm, LoginForm, QuestionForm
+from .models import Message, SignupForm, LoginForm, MessageForm
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+    context_object_name = 'latest_message_list'
 
     def get_queryset(self):
         return Message.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
@@ -53,38 +53,31 @@ def user_logout(request):
     return redirect('polls:login')
 
 def index(request):
-    latest_question_list = Message.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
+    latest_message_list = Message.objects.order_by('-pub_date')[:5]
+    context = {'latest_message_list': latest_message_list}
     return render(request, 'polls/index.html', context)
 
-def detail(request, question_id):
-    question = get_object_or_404(Message, pk=question_id)
-    return render(request, 'polls/detail.html', {'question': question})
+def detail(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    return render(request, 'polls/detail.html', {'message': message})
 
-def results(request, question_id):
-    question = get_object_or_404(Message, pk=question_id)
-    return render(request, 'polls/results.html', {'question': question})
-
-def vote(request, question_id):
-    question = get_object_or_404(Message, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+def results(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    return render(request, 'polls/results.html', {'message': message})
 
 def create_poll(request):
     if request.method == 'POST':
-        form = QuestionForm(request.POST)
+        form = MessageForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('polls:index')
     else:
-        form = QuestionForm(initial={'pub_date': timezone.now()})
+        form = MessageForm(initial={'pub_date': timezone.now()})
     return render(request, 'polls/create_poll.html', {'form': form})
+
+def message_delete(request, pk):
+    message = get_object_or_404(Message, pk=pk)
+    if request.method == "POST":
+        message.delete()
+        return redirect('polls:index')  
+    return redirect('polls:index')
