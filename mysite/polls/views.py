@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.db import connection, transaction
 from .models import Message, SignupForm, LoginForm, MessageForm
 
 class IndexView(generic.ListView):
@@ -69,7 +70,15 @@ def create_poll(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-            form.save()
+            message_text = form.cleaned_data['message_text']
+            pub_date = form.cleaned_data['pub_date']
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
+                    [message_text, pub_date]
+                )
+            transaction.commit()  
             return redirect('polls:index')
     else:
         form = MessageForm(initial={'pub_date': timezone.now()})
