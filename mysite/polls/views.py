@@ -9,10 +9,10 @@ from .models import Message, SignupForm, LoginForm, MessageForm
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
-    context_object_name = 'latest_message_list'
+    context_object_name = 'message_list'
 
     def get_queryset(self):
-        return Message.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+        return Message.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
 
 class DetailView(generic.DetailView):
     model = Message
@@ -54,8 +54,8 @@ def user_logout(request):
     return redirect('polls:login')
 
 def index(request):
-    latest_message_list = Message.objects.order_by('-pub_date')[:5]
-    context = {'latest_message_list': latest_message_list}
+    message_list = Message.objects.order_by('-pub_date')
+    context = {'message_list': message_list}
     return render(request, 'polls/index.html', context)
 
 def detail(request, message_id):
@@ -73,11 +73,14 @@ def create_poll(request):
             message_text = form.cleaned_data['message_text']
             pub_date = form.cleaned_data['pub_date']
 
+            print(message_text)
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                     "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
                     [message_text, pub_date]
                 )
+            print("success")
             transaction.commit()  
             return redirect('polls:index')
     else:
