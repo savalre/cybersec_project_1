@@ -13,9 +13,6 @@ class Message(models.Model):
     def __str__(self):
         return self.message_text
 
-    def was_published_recently(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
 class Choice(models.Model):
     question = models.ForeignKey(Message, on_delete=models.CASCADE)

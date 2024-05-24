@@ -14,17 +14,6 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Message.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
 
-class DetailView(generic.DetailView):
-    model = Message
-    template_name = 'polls/detail.html'
-
-    def get_queryset(self):
-        return Message.objects.filter(pub_date__lte=timezone.now())
-
-class ResultsView(generic.DetailView):
-    model = Message
-    template_name = 'polls/results.html'
-
 def user_signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -58,15 +47,7 @@ def index(request):
     context = {'message_list': message_list}
     return render(request, 'polls/index.html', context)
 
-def detail(request, message_id):
-    message = get_object_or_404(Message, pk=message_id)
-    return render(request, 'polls/detail.html', {'message': message})
-
-def results(request, message_id):
-    message = get_object_or_404(Message, pk=message_id)
-    return render(request, 'polls/results.html', {'message': message})
-
-def create_poll(request):
+def create(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
@@ -80,12 +61,12 @@ def create_poll(request):
                     "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
                     [message_text, pub_date]
                 )
+                connection.commit()
             print("success")
-            transaction.commit()  
             return redirect('polls:index')
     else:
         form = MessageForm(initial={'pub_date': timezone.now()})
-    return render(request, 'polls/create_poll.html', {'form': form})
+    return render(request, 'polls/create.html', {'form': form})
 
 def message_delete(request, pk):
     message = get_object_or_404(Message, pk=pk)
