@@ -12,7 +12,7 @@ class IndexView(generic.ListView):
     context_object_name = 'message_list'
 
     def get_queryset(self):
-        return Message.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
+        return Message.objects.order_by('-pub_date')
 
 def user_signup(request):
     if request.method == 'POST':
@@ -42,11 +42,6 @@ def user_logout(request):
     logout(request)
     return redirect('polls:login')
 
-def index(request):
-    message_list = Message.objects.order_by('-pub_date')
-    context = {'message_list': message_list}
-    return render(request, 'polls/index.html', context)
-
 def create(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -61,7 +56,7 @@ def create(request):
                     "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
                     [message_text, pub_date]
                 )
-                connection.commit()
+                transaction.commit()
             print("success")
             return redirect('polls:index')
     else:

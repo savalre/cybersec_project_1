@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
 {% if request.user.is_authenticated %}
-  <p>{{ request.user.username }}</p>
+  <p>You are logged in as: {{ request.user.username }}</p>
   <a href="{% url 'polls:logout' %}">Logout</a>
 {% else %}
   <a href="{% url 'polls:login' %}">Login</a>
@@ -13,21 +13,28 @@
 <h1>Welcome to very secure message board!</h1>
 
 {% if user.is_authenticated %}
+
+<p><a href="{% url 'polls:create' %}" style="margin-bottom: 2em;">Post a message</a></p>
+
     {% if message_list %}
         <table>
             <tr>
                 <th>Message</th>
                 <th>Time</th>
+                {% if request.user.username == "admin" %}
                 <th>Delete Message</th>
+                {% endif %}  
             </tr>
             {% for message in message_list %}
             <tr>
                 <td>{{ message.message_text }}</td>
                 <td>{{ message.pub_date }}</td>
+                {% if request.user.username == "admin" %}
                 <td><form action="{% url 'polls:message_delete' message.pk %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit">Delete</button>
-                </form></td>           
+                </form></td>   
+                {% endif %}        
             </tr>
             {% endfor %}
         </table>
@@ -35,7 +42,6 @@
         <p>No polls are available.</p>
     {% endif %}
     <br>
-    <a href="{% url 'polls:create' %}">Post a message</a>
 {% else %}
     <p>You need to <a href="{% url 'polls:login' %}">log in</a> to see the polls.</p>
 {% endif %}
