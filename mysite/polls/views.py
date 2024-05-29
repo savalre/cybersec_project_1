@@ -49,14 +49,16 @@ def create(request):
             message_text = form.cleaned_data['message_text']
             pub_date = form.cleaned_data['pub_date']
 
+            #SQL Injection:
             with connection.cursor() as cursor:
                 cursor.execute(f"INSERT INTO polls_message (message_text, pub_date) VALUES ('{message_text}','{pub_date}')")
 
+            # Fix to SQL Injection:
             #   cursor.execute(
             #   "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
             #   [message_text, pub_date]
             #   )
-            
+
                 transaction.commit()
                 return redirect('polls:index')
     else:
