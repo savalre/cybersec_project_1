@@ -49,16 +49,16 @@ def create(request):
             message_text = form.cleaned_data['message_text']
             pub_date = form.cleaned_data['pub_date']
 
-            print(message_text)
-            
             with connection.cursor() as cursor:
-                cursor.execute(
-                    "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
-                    [message_text, pub_date]
-                )
+                cursor.execute(f"INSERT INTO polls_message (message_text, pub_date) VALUES ('{message_text}','{pub_date}')")
+
+            #   cursor.execute(
+            #   "INSERT INTO polls_message (message_text, pub_date) VALUES (%s, %s)",
+            #   [message_text, pub_date]
+            #   )
+            
                 transaction.commit()
-            print("success")
-            return redirect('polls:index')
+                return redirect('polls:index')
     else:
         form = MessageForm(initial={'pub_date': timezone.now()})
     return render(request, 'polls/create.html', {'form': form})
