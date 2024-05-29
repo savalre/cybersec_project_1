@@ -44,10 +44,13 @@ def user_logout(request):
 
 def create(request):
     if request.method == 'POST':
+        print("POST")
         form = MessageForm(request.POST)
         if form.is_valid():
+            print("VALID")
             message_text = form.cleaned_data['message_text']
             pub_date = form.cleaned_data['pub_date']
+            print(message_text, pub_date)
 
             with connection.cursor() as cursor:
 
