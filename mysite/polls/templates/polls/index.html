@@ -27,12 +27,7 @@
             </tr>
             {% for message in message_list %}
             <tr>
-                <!--FLAW 3: XSS -->
-                <td>{{ message.message_text|safe }}</td>
-
-                <!-- Fix for XSS:
-                <td>{{ message.message_text }}</td>-->
-                
+                <td>{{ message.message_text }}</td>
                 <td>{{ message.pub_date }}</td>
                 {% if request.user.username == "admin" %}
                 <td><form action="{% url 'polls:message_delete' message.pk %}" method="post" style="display:inline;">

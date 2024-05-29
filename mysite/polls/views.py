@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.db import connection, transaction
 from .models import Message, SignupForm, LoginForm, MessageForm
 
@@ -13,6 +14,14 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Message.objects.order_by('-pub_date')
+    
+    # Flaw 3: Cross-Site Scripting (XSS)
+    # Fix to Cross-Site Scripting (XSS)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for message in context['message_list']:
+            message.message_text = mark_safe(message.message_text)
+        return context
 
 def user_signup(request):
     if request.method == 'POST':
@@ -48,7 +57,7 @@ def create(request):
         if form.is_valid():
             message_text = form.cleaned_data['message_text']
             pub_date = form.cleaned_data['pub_date']
-
+            
             with connection.cursor() as cursor:
 
             # FLAW 1: SQL Injection
