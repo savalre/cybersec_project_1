@@ -82,10 +82,10 @@ def message_delete(request, pk):
     if request.method == "POST":
             message.delete()
             return redirect('polls:index')  
-        return redirect('polls:index')
+    return redirect('polls:index')
 
     # Fix for broken access control:
-    
+
     # if request.user.is_superuser:
     #     if request.method == "POST":
     #         message.delete()
