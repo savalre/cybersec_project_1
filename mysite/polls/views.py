@@ -16,7 +16,7 @@ class IndexView(generic.ListView):
         return Message.objects.order_by('-pub_date')
     
     # Flaw 3: Cross-Site Scripting (XSS)
-    # Fix to Cross-Site Scripting (XSS)
+    # Fix to Cross-Site Scripting (XSS) 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for message in context['message_list']:
@@ -77,7 +77,19 @@ def create(request):
 
 def message_delete(request, pk):
     message = get_object_or_404(Message, pk=pk)
+
+# FLAW 2: Broken Access Control:
     if request.method == "POST":
-        message.delete()
-        return redirect('polls:index')  
-    return redirect('polls:index')
+            message.delete()
+            return redirect('polls:index')  
+        return redirect('polls:index')
+
+    # Fix for broken access control:
+    
+    # if request.user.is_superuser:
+    #     if request.method == "POST":
+    #         message.delete()
+    #         return redirect('polls:index')  
+    #     return redirect('polls:index')
+    # else:
+    #     return redirect('polls:index') 

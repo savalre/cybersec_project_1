@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 
     # FLAW 5: CSRF Token.
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
