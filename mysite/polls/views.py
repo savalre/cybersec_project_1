@@ -16,7 +16,7 @@ class IndexView(generic.ListView):
         return Message.objects.order_by('-pub_date')
     
     # Flaw 3: Cross-Site Scripting (XSS)
-    # Fix to Cross-Site Scripting (XSS) 
+    # Fix to Cross-Site Scripting (XSS) is removing the method "get_context_data"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for message in context['message_list']:
